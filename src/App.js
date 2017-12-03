@@ -32,7 +32,7 @@ class App extends Component {
     const searchParams = new URLSearchParams(window.location.search);
     const mode = searchParams.get('mode') || 'edit';
     const options = searchParams.get('options');
-    const title = searchParams.get('title') || '';
+    const title = searchParams.get('title') ? atob(searchParams.get('title')) : '';
 
     if (options) {
       this.setState({loading: true});
@@ -62,7 +62,7 @@ class App extends Component {
 
     const optionArray = this.state.optionString.split('\n').filter(val => !!val);
     codec.compress(optionArray).then(compressed => {
-      history.push(window.location.pathname + `?mode=choose&title=${this.state.title}&options=${compressed}`);
+      history.push(window.location.pathname + `?mode=choose&title=${btoa(this.state.title)}&options=${compressed}`);
       this.setState({
         optionArray,
       });
