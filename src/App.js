@@ -3,6 +3,7 @@ import './App.css';
 import createHistory from 'history/createBrowserHistory'
 import ViewChooser from './views/ViewChooser';
 import EditChooser from './views/EditChooser';
+import without from 'lodash/without';
 
 const history = createHistory()
 const codec = window.JsonUrl('lzstring');
@@ -11,8 +12,12 @@ class App extends Component {
   state = {
     loading: false,
     title: '',
-    optionString: '',
-    optionArray: [],
+    choosers: [
+      {
+        options: [],
+        count: 1,
+      }
+    ],
     mode: 'edit',
   }
 
@@ -30,6 +35,22 @@ class App extends Component {
     }
   }
 
+  choose(choosers) {
+    return choosers.map(chooser => {
+      const count = chooser.count || 1;
+      const choices = [];
+      let options = chooser.options;
+      for (let i = 0; i < count; i+= 1) {
+        if (options.length) {
+          const choice = Math.floor(Math.random() * options.length);
+          choices.push(choice);
+          options = without(options, choice);
+        }
+      }
+      return choices;
+    })
+  }
+
   updateStateFromQueryString(location) {
     const searchParams = new URLSearchParams(window.location.search);
     const mode = searchParams.get('mode') || 'edit';
@@ -39,14 +60,21 @@ class App extends Component {
     if (options) {
       this.setState({loading: true});
 
-      codec.decompress(options).then(optionArray => {
+      codec.decompress(options).then(choosers => {
+        // For backwards compatibility
+        if (typeof choosers[0] === 'string') {
+          choosers = [
+            {
+              options: choosers,
+            }
+          ]
+        }
         this.setState({
           loading: false,
           title,
           mode,
-          optionString: optionArray.join('\n'),
-          optionArray: optionArray,
-          choice: Math.floor(Math.random() * optionArray.length)
+          choosers: choosers,
+          choices: this.choose(choosers),
         });
       });
     } else {
@@ -58,15 +86,14 @@ class App extends Component {
   }
 
   setOptionsInQueryString = () => {
-    if (!this.state.optionString) {
-      return window.location.href;
-    }
-
-    const optionArray = this.state.optionString.split('\n').filter(val => !!val);
-    codec.compress(optionArray).then(compressed => {
+    const choosers = this.state.choosers.map(chooser => {
+      chooser.options = chooser.options.filter(v => !!v);
+      return chooser;
+    });
+    codec.compress(choosers).then(compressed => {
       history.push(window.location.pathname + `?mode=choose&title=${btoa(this.state.title)}&options=${compressed}`);
       this.setState({
-        optionArray,
+        choosers,
       });
     })
   }
@@ -76,8 +103,19 @@ class App extends Component {
     this.setOptionsInQueryString();
   }
 
-  updateOptions = (event) => {
-    this.setState({ optionString: event.target.value });
+  updateChooser = (index, field, event) => {
+    const value = event.target.value;
+    this.setState(prevState => {
+      const choosers = prevState.choosers.slice();
+      const chooser = prevState.choosers[index];
+      if (field === 'options') {
+        chooser[field] = value.split('\n');
+      } else {
+        chooser[field] = value;
+      }
+      choosers[index] = chooser;
+      return { choosers };
+    });
   }
 
   updateTitle = (event) => {
@@ -92,18 +130,19 @@ class App extends Component {
     if (this.state.mode === 'choose') {
       return <ViewChooser
         title={this.state.title}
-        optionArray={this.state.optionArray}
-        initialChoice={this.state.choice}
+        choosers={this.state.choosers}
+        choices={this.state.choices}
+        choose={() => this.setState({ choices: this.choose(this.state.choosers)})}
         history={history}
       />
     }
 
     return <EditChooser
       title={this.state.title}
-      optionString={this.state.optionString}
+      choosers={this.state.choosers}
       onSubmit={this.onSubmit}
       updateTitle={this.updateTitle}
-      updateOptions={this.updateOptions}
+      updateChooser={this.updateChooser}
     />
   }
 }

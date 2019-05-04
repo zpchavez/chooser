@@ -5,14 +5,32 @@ class EditChooser extends Component
 {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    optionString: PropTypes.string.isRequired,
     onSubmit: PropTypes.func.isRequired,
     updateTitle: PropTypes.func.isRequired,
-    updateOptions: PropTypes.func.isRequired,
+    updateChooser: PropTypes.func.isRequired,
+  }
+
+  renderSubChooser = (chooser, index) => {
+    const { updateChooser } = this.props;
+
+    return (
+      <div key={`chooser-${index}`}>
+        <div>
+          <textarea
+            onChange={updateChooser.bind(this, index, 'options')}
+            value={chooser.options.join('\n')}
+            style={{
+              width: '50%',
+              height: 250,
+            }}
+          />
+        </div>
+      </div>
+    );
   }
 
   render() {
-    const { title, optionString, updateTitle, updateOptions, onSubmit } = this.props;
+    const { title, choosers, updateTitle, onSubmit } = this.props;
 
     return (
       <div className="App">
@@ -36,16 +54,7 @@ class EditChooser extends Component
               }}
             />
           </div>
-          <div>
-            <textarea
-              onChange={updateOptions}
-              value={optionString}
-              style={{
-                width: '50%',
-                height: 250,
-              }}
-            />
-          </div>
+          {choosers.map(this.renderSubChooser)}
           <div>
             <button
               type="Submit"
