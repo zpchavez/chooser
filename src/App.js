@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import createHistory from 'history/createBrowserHistory'
+import ViewChooser from './views/ViewChooser';
+import EditChooser from './views/EditChooser';
 
 const history = createHistory()
 const codec = window.JsonUrl('lzstring');
@@ -82,93 +84,27 @@ class App extends Component {
     this.setState({ title: event.target.value });
   }
 
-  renderChoose() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">{this.state.title}</h1>
-        </header>
-        <div>
-          {this.state.optionArray[this.state.choice]}
-        </div>
-        <hr />
-        <div>
-          <button
-            onClick={() => {
-              this.setState({choice: Math.floor(Math.random() * this.state.optionArray.length)})
-            }}
-          >
-            Choose Again
-          </button>
-          <button
-            onClick={() => {
-              this.setState({ mode: 'edit' }, (val) => {
-                const searchParams = new URLSearchParams(window.location.search);
-                searchParams.set('mode', 'edit');
-                history.push(window.location.pathname + `?${searchParams.toString()}`)
-              })
-            }}
-          >
-            Edit Chooser
-          </button>
-        </div>
-        <hr />
-        <a href={window.location.href}>Permalink</a>
-      </div>
-    );
-  }
-
   render() {
     if (this.state.loading) {
       return null;
     }
 
     if (this.state.mode === 'choose') {
-      return this.renderChoose();
+      return <ViewChooser
+        title={this.state.title}
+        optionArray={this.state.optionArray}
+        initialChoice={this.state.choice}
+        history={history}
+      />
     }
 
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Chooser</h1>
-        </header>
-        <p className="App-intro">
-          Enter a list of options to choose from, with each option
-          on a new line.
-        </p>
-        <form onSubmit={this.onSubmit}>
-          <div>
-            <input
-              type="text"
-              value={this.state.title}
-              placeholder="Title of Chooser"
-              onChange={this.updateTitle}
-              style={{
-                margin: 20,
-                width: '50%',
-              }}
-            />
-          </div>
-          <div>
-            <textarea
-              onChange={this.updateOptions}
-              value={this.state.optionString}
-              style={{
-                width: '50%',
-                height: 250,
-              }}
-            />
-          </div>
-          <div>
-            <button
-              type="Submit"
-            >
-              Generate Chooser
-            </button>
-          </div>
-        </form>
-      </div>
-    );
+    return <EditChooser
+      title={this.state.title}
+      optionString={this.state.optionString}
+      onSubmit={this.onSubmit}
+      updateTitle={this.updateTitle}
+      updateOptions={this.updateOptions}
+    />
   }
 }
 
