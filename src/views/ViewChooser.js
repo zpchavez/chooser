@@ -20,7 +20,7 @@ class ViewChooser extends Component
     const { choices } = this.props;
     return (
       <div key={`choices-${index}`}>
-        {choices[index].map((choice, index2) => <div key={`choice-${index}-${index2}`}>{chooser.options[choice]}</div>)}
+        {choices[index].map((choice, index2) => <div key={`choice-${index}-${index2}`}>{choice}</div>)}
       </div>
     )
   }

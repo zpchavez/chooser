@@ -43,8 +43,8 @@ class App extends Component {
       for (let i = 0; i < count; i+= 1) {
         if (options.length) {
           const choice = Math.floor(Math.random() * options.length);
-          choices.push(choice);
-          options = without(options, choice);
+          choices.push(options[choice]);
+          options = without(options, options[choice]);
         }
       }
       return choices;
@@ -109,7 +109,8 @@ class App extends Component {
       const choosers = prevState.choosers.slice();
       const chooser = prevState.choosers[index];
       if (field === 'options') {
-        chooser[field] = value.split('\n');
+        chooser.options = value.split('\n');
+        chooser.count = Math.min(chooser.count, chooser.options.filter(v => !!v).length);
       } else {
         chooser[field] = value;
       }
