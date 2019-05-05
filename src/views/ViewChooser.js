@@ -19,7 +19,7 @@ class ViewChooser extends Component
   renderChoice = (chooser, index) => {
     const { choices } = this.props;
     return (
-      <div key={`choices-${index}`}>
+      <div key={`choices-${index}`} style={{ margin: 20 }}>
         {choices[index].map((choice, index2) => <div key={`choice-${index}-${index2}`}>{choice}</div>)}
       </div>
     )
@@ -28,7 +28,7 @@ class ViewChooser extends Component
   renderChoices() {
     const { choosers } = this.props;
     return (
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         {choosers.map(this.renderChoice)}
       </div>
     );
@@ -42,10 +42,11 @@ class ViewChooser extends Component
           <h1 className="App-title">{title}</h1>
         </header>
         {this.renderChoices()}
-        <hr />
+        <br />
         <div>
           <button
             onClick={choose}
+            style={{ marginRight: 10}}
           >
             Choose Again
           </button>
@@ -59,7 +60,7 @@ class ViewChooser extends Component
             Edit Chooser
           </button>
         </div>
-        <hr />
+        <br />
         <a href={window.location.href}>Permalink</a>
       </div>
     );

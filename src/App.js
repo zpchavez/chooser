@@ -123,6 +123,24 @@ class App extends Component {
     this.setState({ title: event.target.value });
   }
 
+  addSubchooser = () => {
+    this.setState(prevState => {
+      const choosers = prevState.choosers.slice();
+      choosers.push({
+        options: [],
+        count: 1,
+      });
+      return { choosers };
+    })
+  }
+
+  removeSubchooser = (index) => {
+    this.setState(prevState => {
+      const choosers = prevState.choosers.filter((chooser, chooserIndex) => chooserIndex !== index)
+      return { choosers };
+    })
+  }
+
   render() {
     if (this.state.loading) {
       return null;
@@ -144,6 +162,8 @@ class App extends Component {
       onSubmit={this.onSubmit}
       updateTitle={this.updateTitle}
       updateChooser={this.updateChooser}
+      addSubchooser={this.addSubchooser}
+      removeSubchooser={this.removeSubchooser}
     />
   }
 }
