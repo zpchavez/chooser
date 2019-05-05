@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-class ViewChooser extends Component
-{
+class ViewChooser extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     choosers: PropTypes.array.isRequired,
@@ -12,26 +11,24 @@ class ViewChooser extends Component
 
   isValid = () => {
     return this.props.choosers.reduce((acc, chooser) => {
-      return chooser.option
+      return chooser.option;
     });
-  }
+  };
 
   renderChoice = (chooser, index) => {
     const { choices } = this.props;
     return (
       <div key={`choices-${index}`} style={{ margin: 20 }}>
-        {choices[index].map((choice, index2) => <div key={`choice-${index}-${index2}`}>{choice}</div>)}
+        {choices[index].map((choice, index2) => (
+          <div key={`choice-${index}-${index2}`}>{choice}</div>
+        ))}
       </div>
-    )
-  }
+    );
+  };
 
   renderChoices() {
     const { choosers } = this.props;
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        {choosers.map(this.renderChoice)}
-      </div>
-    );
+    return <div style={{ display: 'flex', justifyContent: 'center' }}>{choosers.map(this.renderChoice)}</div>;
   }
 
   render() {
@@ -44,17 +41,14 @@ class ViewChooser extends Component
         {this.renderChoices()}
         <br />
         <div>
-          <button
-            onClick={choose}
-            style={{ marginRight: 10}}
-          >
+          <button onClick={choose} style={{ marginRight: 10 }}>
             Choose Again
           </button>
           <button
             onClick={() => {
               const searchParams = new URLSearchParams(window.location.search);
               searchParams.set('mode', 'edit');
-              history.push(window.location.pathname + `?${searchParams.toString()}`)
+              history.push(window.location.pathname + `?${searchParams.toString()}`);
             }}
           >
             Edit Chooser

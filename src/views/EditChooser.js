@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import range from "lodash/range";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import range from 'lodash/range';
 
 class EditChooser extends Component {
   static propTypes = {
@@ -9,7 +9,7 @@ class EditChooser extends Component {
     updateTitle: PropTypes.func.isRequired,
     updateChooser: PropTypes.func.isRequired,
     addSubchooser: PropTypes.func.isRequired,
-    removeSubchooser: PropTypes.func.isRequired
+    removeSubchooser: PropTypes.func.isRequired,
   };
 
   renderSubChooser = (chooser, index) => {
@@ -19,38 +19,29 @@ class EditChooser extends Component {
       <div key={`chooser-${index}`}>
         <h3>Subchooser {index + 1}</h3>
         {index > 0 ? (
-            <div>
-              <button
-                type="button"
-                onClick={removeSubchooser.bind(this, index)}
-                style={{ marginBottom: 20 }}
-              >
-                Remove Subchooser
-              </button>
-            </div>
-          ) : null}
+          <div>
+            <button type="button" onClick={removeSubchooser.bind(this, index)} style={{ marginBottom: 20 }}>
+              Remove Subchooser
+            </button>
+          </div>
+        ) : null}
         <label htmlFor={`chooser-options-${index}`}>Options</label>
         <div>
           <textarea
             id={`chooser-options-${index}`}
-            onChange={updateChooser.bind(this, index, "options")}
-            value={chooser.options.join("\n")}
+            onChange={updateChooser.bind(this, index, 'options')}
+            value={chooser.options.join('\n')}
             style={{
-              width: "50%",
+              width: '50%',
               height: 250,
-              marginBottom: 20
+              marginBottom: 20,
             }}
           />
         </div>
         <div>
-          <label htmlFor={`chooser-count-${index}`}>
-            Count (# of items to choose)
-          </label>
+          <label htmlFor={`chooser-count-${index}`}>Count (# of items to choose)</label>
           <div>
-            <select
-              onChange={updateChooser.bind(this, index, "count")}
-              value={chooser.count}
-            >
+            <select onChange={updateChooser.bind(this, index, 'count')} value={chooser.count}>
               {range(1, chooser.options.length + 1).map(count => (
                 <option key={count} value={count}>
                   {count}
@@ -64,13 +55,7 @@ class EditChooser extends Component {
   };
 
   render() {
-    const {
-      title,
-      choosers,
-      updateTitle,
-      onSubmit,
-      addSubchooser,
-    } = this.props;
+    const { title, choosers, updateTitle, onSubmit, addSubchooser } = this.props;
 
     return (
       <div className="App">
@@ -89,7 +74,7 @@ class EditChooser extends Component {
                 onChange={updateTitle}
                 style={{
                   marginBottom: 20,
-                  width: "50%"
+                  width: '50%',
                 }}
               />
             </div>
@@ -97,18 +82,14 @@ class EditChooser extends Component {
           <p className="App-intro">Put each option on a line by itself</p>
           {choosers.map(this.renderSubChooser)}
           <div>
-            <button
-              type="button"
-              onClick={addSubchooser}
-              style={{ marginTop: 20 }}
-            >
+            <button type="button" onClick={addSubchooser} style={{ marginTop: 20 }}>
               Add Subchooser
             </button>
           </div>
           <div>
             <button
               style={{
-                marginTop: 20
+                marginTop: 20,
               }}
               type="Submit"
             >

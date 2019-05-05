@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
-import createHistory from 'history/createBrowserHistory'
+import createHistory from 'history/createBrowserHistory';
 import ViewChooser from './views/ViewChooser';
 import EditChooser from './views/EditChooser';
 import without from 'lodash/without';
 
-const history = createHistory()
+const history = createHistory();
 const codec = window.JsonUrl('lzstring');
 
 class App extends Component {
@@ -16,17 +16,17 @@ class App extends Component {
       {
         options: [],
         count: 1,
-      }
+      },
     ],
     mode: 'edit',
-  }
+  };
 
   componentWillMount() {
     this.updateStateFromQueryString(window.location);
 
     history.listen(location => {
       this.updateStateFromQueryString(window.location);
-    })
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -40,7 +40,7 @@ class App extends Component {
       const count = chooser.count || 1;
       const choices = [];
       let options = chooser.options;
-      for (let i = 0; i < count; i+= 1) {
+      for (let i = 0; i < count; i += 1) {
         if (options.length) {
           const choice = Math.floor(Math.random() * options.length);
           choices.push(options[choice]);
@@ -48,7 +48,7 @@ class App extends Component {
         }
       }
       return choices;
-    })
+    });
   }
 
   updateStateFromQueryString(location) {
@@ -58,7 +58,7 @@ class App extends Component {
     const title = searchParams.get('title') ? atob(searchParams.get('title')) : '';
 
     if (options) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
 
       codec.decompress(options).then(choosers => {
         // For backwards compatibility
@@ -66,8 +66,8 @@ class App extends Component {
           choosers = [
             {
               options: choosers,
-            }
-          ]
+            },
+          ];
         }
         this.setState({
           loading: false,
@@ -95,13 +95,13 @@ class App extends Component {
       this.setState({
         choosers,
       });
-    })
-  }
+    });
+  };
 
-  onSubmit = (event) => {
+  onSubmit = event => {
     event.preventDefault();
     this.setOptionsInQueryString();
-  }
+  };
 
   updateChooser = (index, field, event) => {
     const value = event.target.value;
@@ -117,11 +117,11 @@ class App extends Component {
       choosers[index] = chooser;
       return { choosers };
     });
-  }
+  };
 
-  updateTitle = (event) => {
+  updateTitle = event => {
     this.setState({ title: event.target.value });
-  }
+  };
 
   addSubchooser = () => {
     this.setState(prevState => {
@@ -131,15 +131,15 @@ class App extends Component {
         count: 1,
       });
       return { choosers };
-    })
-  }
+    });
+  };
 
-  removeSubchooser = (index) => {
+  removeSubchooser = index => {
     this.setState(prevState => {
-      const choosers = prevState.choosers.filter((chooser, chooserIndex) => chooserIndex !== index)
+      const choosers = prevState.choosers.filter((chooser, chooserIndex) => chooserIndex !== index);
       return { choosers };
-    })
-  }
+    });
+  };
 
   render() {
     if (this.state.loading) {
@@ -147,24 +147,28 @@ class App extends Component {
     }
 
     if (this.state.mode === 'choose') {
-      return <ViewChooser
-        title={this.state.title}
-        choosers={this.state.choosers}
-        choices={this.state.choices}
-        choose={() => this.setState({ choices: this.choose(this.state.choosers)})}
-        history={history}
-      />
+      return (
+        <ViewChooser
+          title={this.state.title}
+          choosers={this.state.choosers}
+          choices={this.state.choices}
+          choose={() => this.setState({ choices: this.choose(this.state.choosers) })}
+          history={history}
+        />
+      );
     }
 
-    return <EditChooser
-      title={this.state.title}
-      choosers={this.state.choosers}
-      onSubmit={this.onSubmit}
-      updateTitle={this.updateTitle}
-      updateChooser={this.updateChooser}
-      addSubchooser={this.addSubchooser}
-      removeSubchooser={this.removeSubchooser}
-    />
+    return (
+      <EditChooser
+        title={this.state.title}
+        choosers={this.state.choosers}
+        onSubmit={this.onSubmit}
+        updateTitle={this.updateTitle}
+        updateChooser={this.updateChooser}
+        addSubchooser={this.addSubchooser}
+        removeSubchooser={this.removeSubchooser}
+      />
+    );
   }
 }
 
