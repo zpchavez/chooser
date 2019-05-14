@@ -18,6 +18,7 @@ class App extends Component {
         count: 1,
       },
     ],
+    choices: [],
     mode: 'edit',
   };
 
@@ -35,18 +36,26 @@ class App extends Component {
     }
   }
 
-  choose(choosers) {
-    return choosers.map(chooser => {
+  choose(choosers, locked=[]) {
+    return choosers.map((chooser, i) => {
       const count = chooser.count || 1;
       const choices = [];
       let options = chooser.options;
-      for (let i = 0; i < count; i += 1) {
+      if (locked[i]) {
+        return this.state.choices[i];
+      }
+      for (let j = 0; j < count; j += 1) {
         if (options.length) {
           const choice = Math.floor(Math.random() * options.length);
           choices.push(options[choice]);
           options = without(options, options[choice]);
         }
       }
+      this.setState(prevState => {
+        const choices = prevState.choices.slice();
+        choices[i] = choices;
+        return { choices };
+      })
       return choices;
     });
   }
@@ -152,7 +161,7 @@ class App extends Component {
           title={this.state.title}
           choosers={this.state.choosers}
           choices={this.state.choices}
-          choose={() => this.setState({ choices: this.choose(this.state.choosers) })}
+          choose={(locked) => this.setState({ choices: this.choose(this.state.choosers, locked) })}
           history={history}
         />
       );
